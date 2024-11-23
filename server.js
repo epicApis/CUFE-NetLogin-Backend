@@ -10,7 +10,7 @@ app.use(express.json()); // Middleware to parse JSON bodies
 
 // Root endpoint
 app.get("/", (req, res) => {
-  res.status(200).send("已经帮助登录了？次");
+  res.send("Hello World!");
 });
 
 // POST endpoint to insert data into the database
