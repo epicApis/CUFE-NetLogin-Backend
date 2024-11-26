@@ -88,10 +88,10 @@ async function syncAccessCountToDatabase() {
     const connection = await mysql.createConnection(dbConfig);
 
     for (const log of accessLogs) {
-      await connection.execute("INSERT INTO access (ip, time) VALUES (?, ?)", [
-        log.ip,
-        log.time,
-      ]);
+      await connection.execute(
+        "INSERT INTO access (ip, time) VALUES (INET_ATON(?), ?)",
+        [log.ip, log.time]
+      );
     }
 
     const [rows] = await connection.query(
