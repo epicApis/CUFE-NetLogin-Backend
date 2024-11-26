@@ -9,9 +9,53 @@ const dbConfig = config.get("database");
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
+app.set("trust proxy", true);
+
 // Root endpoint
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Access Count</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+          background-color: #f0f0f0;
+        }
+        .container {
+          text-align: center;
+          background: white;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+          margin: 0;
+          font-size: 2em;
+          color: #333;
+        }
+        p {
+          font-size: 1.2em;
+          color: #666;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Access Count</h1>
+        <p>Current access count: ${accessCount}</p>
+      </div>
+    </body>
+    </html>
+  `);
 });
 
 // POST endpoint to insert data into the database
@@ -65,7 +109,7 @@ let accessLogs = [];
 
 app.get("/access", (req, res) => {
   try {
-    const ip = req.ip;
+    const ip = req.ip.match(/(\d{1,3}\.){3}\d{1,3}/) ? req.ip : null;
     const time = new Date();
 
     accessCount++;
