@@ -132,10 +132,15 @@ async function syncAccessCountToDatabase() {
     const connection = await mysql.createConnection(dbConfig);
 
     for (const log of accessLogs) {
-      await connection.execute(
-        "INSERT INTO access (ip, time) VALUES (INET_ATON(?), ?)",
-        [log.ip, log.time]
-      );
+      try {
+        await connection.execute(
+          "INSERT INTO access (ip, time) VALUES (INET_ATON(?), ?)",
+          [log.ip, log.time]
+        );
+      } catch (error) {
+        console.error("Error inserting access log:", error.message);
+        continue; // Skip this log entry and continue with the next one
+      }
     }
 
     const [rows] = await connection.query(
